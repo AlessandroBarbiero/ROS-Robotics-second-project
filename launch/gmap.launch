@@ -10,14 +10,13 @@
 <!-- Static transformation with a rotation of 90° -->
   <node pkg="tf2_ros" type="static_transform_publisher" name="BaseLinkToCamera" args="0 0 0 0 0 0.707 0.707 base_link laser"/>
 
-
   <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
     <param name="base_frame" value="$(arg base_frame)"/>
     <param name="odom_frame" value="$(arg odom_frame)"/>
     <param name="map_update_interval" value="1.0"/>
-    <!-- Changed to exclude biased values -->
-    <param name="maxUrange" value="9.0"/>
-    <param name="maxRange" value="10.5"/>
+    <!-- Changed to datasheet values -->
+    <param name="maxUrange" value="18.0"/>
+    <param name="maxRange" value="20.0"/>
     <param name="sigma" value="0.05"/>
     <param name="kernelSize" value="1"/>
     <param name="lstep" value="0.05"/>
