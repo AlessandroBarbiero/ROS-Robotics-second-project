@@ -1,29 +1,43 @@
-
 <launch>
 <!-- Added to use sim time -->
   <param name="/use_sim_time" type="bool" value= "true" />
 
-<!-- Reported transformations -->
-  <node pkg="tf2_ros" type="static_transform_publisher" name="BaseLinkToLaser" args="0 0 0 0 0 0.707 0.707 base_link laser"/>  
-  <node pkg="tf2_ros" type="static_transform_publisher" name="mapToOdom" args="0 0 0 0 0 0 1 map odom"/>
-  <node pkg="tf2_ros" type="static_transform_publisher" name="worldToMap" args="0 0 0 0 0 0 1 world map"/>
+  <!-- I didn't publish this transformation because this is published by amcl -->
+  <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="mapToOdom" args="0 0 0 0 0 0 1 map odom"/> -->
 
-<!-- Static transformation for unify the tf tree, removed bacause it crashed the simulation>
-  <node pkg="tf2_ros" type="static_transform_publisher" name="baseLinkToCamera" args="0 0 0 0 0 0 1 base_link camera_odom_frame"/>
+
+<!-- Static transformation for unify the tf tree, removed bacause it crashed the simulation -->
+  <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="baseLinkToCamera" args="0 0 0 0 0 0 1 base_link camera_odom_frame"/> -->
+<!--
+  Probably the camera_odom_frame is a sort of odom since exists the topic camera/odom/sample that publish odometry messages,
+  maybe if we want to use the sensors of the camera we could try to link this directly to odom
 -->
 
+
+<!-- Transformations -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="BaseLinkToLaser" args="0 0 0 0 0 0.707 0.707 base_link laser"/>  
+  <node pkg="tf2_ros" type="static_transform_publisher" name="worldToMap" args="0 0 0 0 0 0 1 world map"/>
+
+
   <!-- Added for publish the map directly to the map topic -->
+      <!--arg name="map_file" default="$(find project2)/maps/map10mhalfspeed.yaml"/--> 
       <arg name="map_file" default="$(find project2)/maps/map10mhalfspeed.yaml"/> 
       <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" /> 
 
 
 <!-- ComplementaryFilter configuration --> 
+<!-- Added the topic to read the data from -->
+<arg name="imu_topic"      default="/mavros/imu/data_raw"/> 
+
 <node pkg="imu_complementary_filter" type="complementary_filter_node" name="complementary_filter_gain_node" output="screen"> 
-<param name="do_bias_estimation" value="true"/> 
-<param name="do_adaptive_gain" value="true"/> 
-<param name="use_mag" value="false"/> 
-<param name="gain_acc" value="0.01"/> 
-<param name="gain_mag" value="0.01"/> 
+
+<param name="do_bias_estimation"     value="true"/> 
+<param name="do_adaptive_gain"       value="true"/> 
+<param name="use_mag"                value="false"/> 
+<param name="gain_acc"               value="0.01"/> 
+<param name="gain_mag"               value="0.01"/> 
+
+<remap from="imu/data_raw"           to="$(arg imu_topic)"/>
 </node> 
 
 
@@ -36,17 +50,25 @@
       <param name="sensor_timeout" value="0.1"/>
       <param name="two_d_mode" value="true"/>
 
-      <param name="map_frame" value="map"/>
-      <param name="odom_frame" value="odom"/>
+      <param name="map_frame"       value="map"/>
+      <param name="odom_frame"      value="odom"/>
       <param name="base_link_frame" value="base_link"/>
-      <param name="world_frame" value="odom"/>
+      <param name="world_frame"     value="odom"/>
 
-      <param name="transform_time_offset" value="0.0"/>
+<!-- introduced a offset in timestamp to match the time for the next fusion iteration -->
+      <param name="transform_time_offset" value="0.1"/>
       <param name="transform_timeout" value="0.0"/>
+
+<!-- publish a transformation between world_frame and his child if true if not present is set to true
+     if odom transform odom -> base_link
+     if map transform  map  -> odom 
+-->
+      <param name="publish_tf" value="true"/>
 
 <!-- Add sensors to the ekf-->
       <param name="odom0" value="/odom"/>
-      <param name="imu0" value="/mavros/imu/data_raw"/>
+      <!-- Changed for taking data from the topic published by the complementary_filter_node -->
+      <param name="imu0" value="/imu/data"/>
   <!-- sets which variables do we want to keep from this sensor-->
       <rosparam param="odom0_config">[true, true, false,
                                       false, false, true,
