@@ -3,10 +3,10 @@
   <param name="/use_sim_time" type="bool" value= "true" />
 
   <!-- I didn't publish this transformation because this is published by amcl -->
-  <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="mapToOdom" args="0 0 0 0 0 0 1 map odom"/> -->
+<!--    <node pkg="tf2_ros" type="static_transform_publisher" name="mapToOdom" args="0 0 0 0 0 0 1 map odom"/> -->
 
 
-<!-- Static transformation for unify the tf tree, removed bacause it crashed the simulation -->
+<!-- Static transformation for unify the tf tree, removed because it crashed the simulation -->
   <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="baseLinkToCamera" args="0 0 0 0 0 0 1 base_link camera_odom_frame"/> -->
 <!--
   Probably the camera_odom_frame is a sort of odom since exists the topic camera/odom/sample that publish odometry messages,
@@ -15,13 +15,13 @@
 
 
 <!-- Transformations -->
-  <node pkg="tf2_ros" type="static_transform_publisher" name="BaseLinkToLaser" args="0 0 0 0 0 0.707 0.707 base_link laser"/>  
+  <node pkg="tf2_ros" type="static_transform_publisher" name="BaseLinkToLaser" args="0 0 0 0 0 0.707 0.707 base_link laser"/>
   <node pkg="tf2_ros" type="static_transform_publisher" name="worldToMap" args="0 0 0 0 0 0 1 world map"/>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="worldToScoutOdom" args="0 0 0 0 0 0 1 world scout/odom"/>
 
 
   <!-- Added for publish the map directly to the map topic -->
-      <!--arg name="map_file" default="$(find project2)/maps/map10mhalfspeed.yaml"/--> 
-      <arg name="map_file" default="$(find project2)/maps/map10mhalfspeed.yaml"/> 
+      <arg name="map_file" default="$(find project2)/maps/map10mhalfspeed.yaml"/>
       <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" /> 
 
 
