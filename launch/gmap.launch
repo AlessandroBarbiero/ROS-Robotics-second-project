@@ -1,13 +1,13 @@
 <launch>
-<!-- Changed correctly the name of the topic and frames -->
+  <!-- Changed correctly the name of the topic and frames -->
   <arg name="scan_topic"  default="/scan" />
   <arg name="base_frame"  default="base_link"/>
   <arg name="odom_frame"  default="odom"/>
 
-<!-- Added to use sim type -->
+  <!-- Added to use sim type -->
   <param name="/use_sim_time" type="bool" value= "true" />
 
-<!-- Static transformation with a rotation of 90° -->
+  <!-- Static transformation with a rotation of 90° -->
   <node pkg="tf2_ros" type="static_transform_publisher" name="BaseLinkToCamera" args="0 0 0 0 0 0.707 0.707 base_link laser"/>
 
   <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
@@ -50,7 +50,7 @@
     <remap from="scan" to="$(arg scan_topic)"/>
   </node>
 
-<!-- opens rviz with custom configuration -->
+  <!-- opens rviz with custom configuration -->
   <node type="rviz" name="rviz" pkg="rviz" args="-d $(find project2)/rviz/configuration.rviz" />
 
 </launch>
