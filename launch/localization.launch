@@ -17,7 +17,7 @@
 <!-- Transformations -->
   <node pkg="tf2_ros" type="static_transform_publisher" name="BaseLinkToLaser" args="0 0 0 0 0 0.707 0.707 base_link laser"/>
   <node pkg="tf2_ros" type="static_transform_publisher" name="worldToMap" args="0 0 0 0 0 0 1 world map"/>
-  <node pkg="tf2_ros" type="static_transform_publisher" name="worldToScoutOdom" args="0 0 0 0 0 0 1 world scout/odom"/>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="worldToScoutOdom" args="0 0 0 0 0 0 1 map scout/odom"/>
 
 
   <!-- Added for publish the map directly to the map topic -->
@@ -29,16 +29,17 @@
 <!-- Added the topic to read the data from -->
 <arg name="imu_topic"      default="/mavros/imu/data_raw"/> 
 
-<node pkg="imu_complementary_filter" type="complementary_filter_node" name="complementary_filter_gain_node" output="screen"> 
+    <node pkg="imu_complementary_filter" type="complementary_filter_node" name="complementary_filter_gain_node" output="screen">
 
-<param name="do_bias_estimation"     value="true"/> 
-<param name="do_adaptive_gain"       value="true"/> 
-<param name="use_mag"                value="false"/> 
-<param name="gain_acc"               value="0.01"/> 
-<param name="gain_mag"               value="0.01"/> 
+        <param name="do_bias_estimation"     value="true"/>
+        <param name="do_adaptive_gain"       value="true"/>
+        <param name="use_mag"                value="false"/>
+        <param name="bias_alpha"             value="0.5"/>
+        <param name="gain_acc"               value="0.5"/>
+        <param name="gain_mag"               value="0.5"/>
 
-<remap from="imu/data_raw"           to="$(arg imu_topic)"/>
-</node> 
+        <remap from="imu/data_raw"           to="$(arg imu_topic)"/>
+    </node>
 
 
 
@@ -56,8 +57,8 @@
       <param name="world_frame"     value="odom"/>
 
 <!-- introduced a offset in timestamp to match the time for the next fusion iteration -->
-      <param name="transform_time_offset" value="0.1"/>
-      <param name="transform_timeout" value="0.0"/>
+      <param name="transform_time_offset" value="0.2"/>
+      <param name="transform_timeout" value="0"/>
 
 <!-- publish a transformation between world_frame and his child if true if not present is set to true
      if odom transform odom -> base_link
@@ -77,15 +78,15 @@
                                       false, false, false]</rosparam>
 
       <rosparam param="imu0_config">[false, false, false,
-                                     true,  true,  true,
+                                     false,  false,  false,  <!--changed-->
                                      false, false, false,
                                      true,  true,  false,
-                                     true,  true,  true]</rosparam>
+                                     false,  false,  true]</rosparam>
 
       <param name="odom0_differential" value="true"/>
-      <param name="imu0_differential" value="true"/>
+      <param name="imu0_differential" value="false"/>
       <param name="odom0_relative" value="false"/>
-      <param name="imu0_relative" value="false"/>
+      <param name="imu0_relative" value="true"/>
 
       <param name="imu0_remove_gravitational_acceleration" value="true"/>
 
