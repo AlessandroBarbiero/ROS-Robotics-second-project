@@ -15,7 +15,7 @@
     <node pkg="tf2_ros" type="static_transform_publisher" name="worldToMap"       args="0 0 0 0 0 0 1 world map"/>
 
     <!-- Added for publish the map directly to the map topic -->
-    <arg name="map_file" default="$(find project2)/maps/map10mhalfspeed.yaml"/>
+    <arg name="map_file" default="$(find project2)/maps/map.yaml"/>
     <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
 
 

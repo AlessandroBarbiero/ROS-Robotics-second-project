@@ -5,42 +5,45 @@ Team members:
 10692413 Barbiero Alessandro 
 10628989 Borsatto Andrea 
 
+Comment:
+For the generation of the map and the tests on the localization we utilized the first set of bags provided for this assignment.
+
 Brief file description:
--launch folder:
-	-gmap.launch: creates a map with slam_gmapping reading from the /scan topic. Includes a static transformation from the robot's base frame (base_link) to the laser's frame (laser).
+- launch folder:
+	- gmap.launch: creates a map with slam_gmapping reading from the /scan topic. Includes a static transformation from the robot's base frame (base_link) to the laser's frame (laser).
 	              The file also open an rviz configuration to see the process.
-	-amcl.launch: runs amcl node with proper settings, the map is taken from /map topic and the laser data from /laser topic.
-	-localization.launch: first launches the map server exposing the correct map, then runs the ekf_localization_node from ROS robot_localization package.
+	- amcl.launch: runs amcl node with proper settings, the map is taken from /map topic and the laser data from /laser topic.
+	- localization.launch: first launches the map server exposing the correct map, then runs the ekf_localization_node from ROS robot_localization package.
 	                      The implemented EKF algorithm uses the odometry for the prediction step and then the imu data, filtered by a complementary_filter_node (also run by this launch file) for the correction step.
 
--maps folder:
-	-map.pgm: the map resulted from gmapping with 1.bag
-	-map.yaml: description parameters correleted to map.pgm
-	TODO, or fixing the maps or insert all the other maps
+- maps folder:
+	- map.pgm: the map resulted from gmapping with 1.bag  [this is the one utilized in the launch file for localization]
+	- map.yaml: description parameters correlated to map.pgm
+	- modifiedMap.pgm: a map modified using gimp to remove wrong areas from the map "map.pgm" (You can utilize this one for more precision, the localization should work reasonably well anyway using the first one)
+	- modifiedMap.yaml: description parameters correlated to modifiedMap.pgm
 
--rviz folder:
-	-localization.rviz: file with a custom configuration to visualize the robot with rviz during localization. It shows pose, Odometry, covariance, laser and the particles of the amcl.
-	-configuration.rviz: file with a custom configuration to visualize the robot with rviz during the creation of the map using gmapping. It shows TODO!.
+- rviz folder:
+	- localization.rviz: file with a custom configuration to visualize the robot with rviz during localization. It shows on the map pose, Odometry, covariance, laser scan and the particles of the amcl.
+	- configuration.rviz: file with a custom configuration to visualize the robot with rviz during the creation of the map using gmapping. It shows the forming map, the odometry and the laser scan.
 
--deliverables folder:
-    -TODO
+- deliverables folder:
+    - tf_tree.png: the tf_tree generated via rqt_tf_tree node
+    - topics.png: the topics relations generated via rqt_graph node
 
--CMakeLists.txt: default cmake file because there is no need for building custom nodes.
+- CMakeLists.txt: default cmake file because there is no need for building custom nodes.
 
--package.xml: also standard configuration.
+- package.xml: also standard configuration.
 
 TF tree structure:
-- static transformations between world--->map and wolrd--->Robot1/base_link are set just for visualization purposes on rviz.
-- A static TF from base_link to laser which sets a rotation of 97° on the Z axes
-- the TF between odom and base_link is computed by the localization filter node
-- the TF between map and odom is computed by amcl node
+- Static transformations between world ---> map and wolrd ---> Robot1/base_link are set just for visualization purposes on rviz.
+- A static TF from base_link to laser which sets a rotation of 90° on the Z axes
+- The TF between odom (robot's reference frame) and base_link (robot's pose) is computed by the localization node.
+- The TF between map (global reference frame) and odom is computed by the amcl node that corrects the drift.
 
 How to use launch files:
--first launch gmap.launch and consequently the first bag (1.bag). Once the bag has finished, run map server to save the map (map.pgm and map.yaml).
--launch approximately all together localization.launch, amcl.launch and the bag on which the robot has to be localized.
--Rviz will open showing the custom configuration mentioned before.
--the tf between odom (robot's reference frame) and base_link (robot's pose) is computed by the localization node.
--the tf between map (global reference frame) and odom is computed by the amcl node that corrects the drift.
+- first launch gmap.launch and consequently the first bag (1.bag). Once the bag has finished, run map server to save the map (map.pgm and map.yaml).
+- launch approximately all together localization.launch, amcl.launch and the bag on which the robot has to be localized.
+- Rviz will open showing the custom configuration mentioned before.
 
 Sensors choice:
 - from the /odom topic we've selected the x and y coordinates, the velocity only on the X axis because it's a differential drive kinematics (Y velocity=0) and also the angular velocity (yaw')
