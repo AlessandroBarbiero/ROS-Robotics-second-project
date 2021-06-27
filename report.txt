@@ -1,0 +1,36 @@
+SECOND ROBOTICS PROJECT 2021
+
+Team members:
+10659740 Bachir Kaddis Beshay Amir 
+10692413 Barbiero Alessandro 
+10628989 Borsatto Andrea 
+
+Brief file description:
+-launch folder:
+	-gmap.launch: used to create a map with slam_gmapping given the /scan topic. Includes a static transformation from the robot's base frame (base_link) to the laser's pose (laser). 
+	-amcl.launch: launch file that runs amcl node adding the map and laser as parameters
+	-localization.launch: runs the ekf_localization_node from ROS robot_localization package. The implemented EKF algorithm uses the odometry for the prediction step and then the imu data, filter with complementary_filter_node for the correction step. 
+-maps folder:
+	-map.pgm: the map resulted from gmapping with 1.bag
+	-map.yaml: description parameters correleted to map.pgm
+-rviz folder:
+	-localization.rviz: files with a custom configuration to visualiza the roboto on rviz during localization. Pose, Odometry, covariance, laser and the particles.
+-CMakeLists.txt: default cmake file because there is no need for building custom nodes.
+-package.xml: also standard configuration.
+
+TF tree structure:
+- between world--->map and wolrd--->Robot1/base_link we've set a static transform just for vsiualization purposes on rviz.
+- the TF between odom and base_link is computed by the localization filter
+- A static TF from base_link to laser which sets a rotation of 97° on the Z axes
+- the TF between map and odom is computed by amcl
+
+How to use launch files:
+-first launch gmap.launch and consequently the first bag (1.bag). Once the bag has finished, run map server to save the map (map.pgm and map.yaml).
+-launch approximately all together localization.launch, amcl.launch and the bag on which the robot has to be localized.
+-Rviz is also run from the launch files with the custom configuration mentioned before.   
+-the tf between odom (robot's reference frame) and base_link (robot's pose) is computed by the localization node.
+-the tf between map (global reference frame) and odom is computed by the amcl node that corrects the drift.
+
+Sensors choice:
+- from the /odom topic we've selected the the x and y coordinates, the velocity only on the X axis because it's a differential drive kinematics (Y velocity=0) and also the angular velocity (yaw')
+- from the imu we've selected those data that the odometry did not compute directly
