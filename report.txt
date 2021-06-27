@@ -35,7 +35,7 @@ Brief file description:
 - package.xml: also standard configuration.
 
 TF tree structure:
-- Static transformations between world ---> map and wolrd ---> Robot1/base_link are set just for visualization purposes on rviz.
+- A static transformation between world and map set just for visualization purposes on rviz.
 - A static TF from base_link to laser which sets a rotation of 90° on the Z axes
 - The TF between odom (robot's reference frame) and base_link (robot's pose) is computed by the localization node.
 - The TF between map (global reference frame) and odom is computed by the amcl node that corrects the drift.
