@@ -8,7 +8,7 @@
   <param name="/use_sim_time" type="bool" value= "true" />
 
   <!-- Static transformation with a rotation of 90° -->
-  <node pkg="tf2_ros" type="static_transform_publisher" name="BaseLinkToCamera" args="0 0 0 0 0 0.707 0.707 base_link laser"/>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="BaseLinkToLaser" args="0 0 0 0 0 0.707 0.707 base_link laser"/>
 
   <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
     <param name="base_frame" value="$(arg base_frame)"/>
